@@ -3,20 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <title>Thiệp Sinh Nhật 🎂</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <style>
     :root{
       --bg:#0f172a; --card:#0b1224; --text:#e5e7eb; --muted:#94a3b8;
       --primary:#6366f1; --primary-600:#4f46e5; --ok:#10b981; --danger:#ef4444;
     }
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
-      margin:0; min-height:100vh; color:var(--text);
+      margin:0; min-height:100dvh; color:var(--text);
       font-family: ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial;
+      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
       background: radial-gradient(1200px 600px at 10% -10%, #1e293b 0%, transparent 60%), var(--bg);
       display:flex; align-items:center; justify-content:center; padding:24px;
+      padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+      overscroll-behavior-y: contain; -webkit-tap-highlight-color: transparent;
     }
-    
 
     /* fireworks background */
     #fireworks{
@@ -25,22 +28,23 @@
     }
 
     .btn{
-      appearance:none; border:0; cursor:pointer; padding:12px 18px; border-radius:999px;
-      font-weight:700; letter-spacing:.2px; transition:.2s; user-select:none;
+      appearance:none; border:0; cursor:pointer; padding:14px 20px; border-radius:999px;
+      font-weight:800; letter-spacing:.2px; transition:transform .2s, box-shadow .2s; user-select:none;
       background:linear-gradient(135deg,var(--primary),var(--primary-600)); color:#fff; box-shadow:0 10px 24px #00000040;
+      touch-action: manipulation; min-height:44px; line-height:1.1; will-change:transform;
     }
     .btn:hover{transform:translateY(-1px); box-shadow:0 14px 28px #00000055}
     .btn:active{transform:translateY(0); box-shadow:0 8px 18px #00000044}
 
     /* floating sound controls */
     .sound-toggle{
-      position:fixed; right:16px; bottom:16px; z-index:40;
-      display:flex; gap:10px; align-items:center;
+      position:fixed; right:16px; bottom:16px; z-index:40; display:flex; gap:10px; align-items:center;
     }
     .chip{
       background:#ffffff14; color:#fff; border:1px solid #ffffff22;
       padding:10px 14px; border-radius:999px; backdrop-filter: blur(8px);
-      cursor:pointer; user-select:none; transition:.2s;
+      cursor:pointer; user-select:none; transition:background .2s;
+      min-height:40px; display:flex; align-items:center; touch-action:manipulation;
     }
     .chip:hover{background:#ffffff24}
 
@@ -48,7 +52,7 @@
       position:fixed; left:50%; transform:translateX(-50%);
       bottom:84px; z-index:40; background:#111827; color:#fff;
       border:1px solid #ffffff22; padding:10px 16px; border-radius:12px;
-      box-shadow:0 8px 24px #00000055; display:none;
+      box-shadow:0 8px 24px #00000055; display:none; max-width:min(92vw, 520px);
     }
     .nudge.show{display:block}
 
@@ -68,9 +72,9 @@
       padding:18px 22px; display:flex; align-items:center; justify-content:space-between;
       background: linear-gradient(180deg, #111827aa, #0b122400); border-bottom:1px solid #ffffff10;
     }
-    .dialog-title{font-size:18px; font-weight:800; letter-spacing:.3px}
+    .dialog-title{font-size:clamp(16px, 3.8vw, 18px); font-weight:900; letter-spacing:.3px}
     .close{width:40px; height:40px; display:grid; place-items:center; border-radius:12px; cursor:pointer;
-      color:#fff; background:#ffffff14; transition:.2s}
+      color:#fff; background:#ffffff14; transition:transform .2s, background .2s}
     .close:hover{background:#ffffff24; transform:rotate(5deg)}
     .dialog-body{position:relative; padding:22px; display:grid; gap:18px}
 
@@ -81,9 +85,9 @@
     .letter::before{content:""; position:absolute; inset:-2px;
       background: conic-gradient(from 200deg, #ffffff07, transparent 30%, #ffffff05 60%, transparent 80%);
       filter: blur(8px); pointer-events:none;}
-    .subtitle{color:var(--muted); margin-top:2px}
-    .headline{font-size:28px; font-weight:900; margin:4px 0 8px}
-    .message{line-height:1.6; color:#cbd5e1}
+    .subtitle{color:var(--muted); margin-top:2px; font-size:clamp(12px, 3.4vw, 14px)}
+    .headline{font-size:clamp(22px, 6.2vw, 28px); font-weight:900; margin:4px 0 8px}
+    .message{line-height:1.65; color:#cbd5e1; font-size:clamp(14px, 4vw, 16px)}
 
     .modal-actions{position:relative; margin-top:8px; padding-top:6px; display:flex; gap:12px; align-items:center; min-height:64px}
     .btn-yes{background:linear-gradient(135deg,var(--ok),#059669)}
@@ -92,6 +96,23 @@
     /* Confetti inside modal agree */
     #confetti{position:absolute; inset:0; pointer-events:none; z-index:3; opacity:0; transition:opacity .2s}
     #confetti.show{opacity:1}
+
+    /* ===== Mobile-first tweaks ===== */
+    @media (max-width: 480px){
+      body{padding:16px; padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));}
+      .dialog{width:min(560px,96vw); border-radius:20px}
+      .dialog-body{padding:16px; gap:14px}
+      .letter{padding:16px}
+      .modal-actions{flex-direction:column; align-items:stretch; min-height:160px}
+      .modal-actions .btn{width:100%}
+      .sound-toggle{right:12px; bottom:calc(env(safe-area-inset-bottom, 0px) + 12px)}
+      .nudge{bottom: calc(env(safe-area-inset-bottom, 0px) + 84px);}
+    }
+
+    /* Accessibility: reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      *{animation:none!important; transition:none!important}
+    }
   </style>
 </head>
 <body>
@@ -106,10 +127,10 @@
   <div class="sound-toggle">
     <div id="toggleSound" class="chip" role="button" aria-label="Bật/Tắt nhạc">🔊 Tắt/Bật nhạc</div>
   </div>
-  <div id="soundNudge" class="nudge">Trình duyệt chặn tự phát nhạc. Bấm “Bật nhạc 🔊”.</div>
+  <div id="soundNudge" class="nudge" role="status">Trình duyệt chặn tự phát nhạc. Bấm “Bật nhạc 🔊”.</div>
 
   <!-- Hidden audio (replace mp3 path for your site) -->
- <audio id="bgm" src="https://cdn.your-domain.com/audio/happy-birthday.mp3" preload="auto" loop crossorigin="anonymous"></audio>
+  <audio id="bgm" src="https://cdn.your-domain.com/audio/happy-birthday.mp3" preload="auto" loop crossorigin="anonymous"></audio>
 
   <!-- Modal card -->
   <div id="bdayModal" class="modal" aria-hidden="true">
@@ -128,13 +149,13 @@
           <div class="subtitle">Send Thùy Linh,</div>
           <div class="headline">Chúc mừng sinh nhật 🎉</div>
           <div class="message">
-  Tui biết là gần hết một ngày dài rồi mới gửi lời chúc cho cậu. 
-  Vì muốn lời chúc này sẽ là điều cuối cùng trong ngày đặc biệt hôm nay mà cậu nhớ đến ✨.<br><br>
-  Mong tuổi mới của cậu thật nhiều niềm vui và may mắn nha. 
-  Chúc cậu thêm tuổi mới thật nhiều sức khỏe, niềm vui và luôn giữ nụ cười xinh trên môi.<br><br>
-  Mong rằng mọi dự định, ước mơ của cậu sẽ dần thành hiện thực, và mỗi ngày trôi qua đều đáng nhớ hơn ngày trước. 
-  Hy vọng trong số những điều cậu nhớ về hôm nay… có cả tớ nữa 💕.
-</div>
+            Tui biết là gần hết một ngày dài rồi mới gửi lời chúc cho cậu.
+            Vì muốn lời chúc này sẽ là điều cuối cùng trong ngày đặc biệt hôm nay mà cậu nhớ đến ✨.<br><br>
+            Mong tuổi mới của cậu thật nhiều niềm vui và may mắn nha.
+            Chúc cậu thêm tuổi mới thật nhiều sức khỏe, niềm vui và luôn giữ nụ cười xinh trên môi.<br><br>
+            Mong rằng mọi dự định, ước mơ của cậu sẽ dần thành hiện thực, và mỗi ngày trôi qua đều đáng nhớ hơn ngày trước.
+            Hy vọng trong số những điều cậu nhớ về hôm nay… có cả tớ nữa 💕.
+          </div>
         </div>
 
         <div class="modal-actions" id="actions">
@@ -147,7 +168,7 @@
   </div>
 
 <script>
-/* ========= Audio: autoplay with graceful fallback ========= */
+/**************** Audio: autoplay with graceful fallback ****************/ 
 const bgm = document.getElementById('bgm');
 const toggleSound = document.getElementById('toggleSound');
 const soundNudge = document.getElementById('soundNudge');
@@ -161,12 +182,16 @@ async function tryPlayBgm() {
   } catch (e) {
     // Autoplay likely blocked
     soundNudge.classList.add('show');
+  } finally {
+    // reflect the current state to label
+    toggleSound.textContent = bgm.paused ? '🔇 Bật nhạc' : '🔊 Tắt nhạc';
   }
 }
-document.addEventListener('DOMContentLoaded', tryPlayBgm);
+
+document.addEventListener('DOMContentLoaded', tryPlayBgm, { once:true });
 // Unlock on any user gesture
-['click','touchstart','keydown'].forEach(evt=>{
-  window.addEventListener(evt,()=>{ if(bgm.paused) tryPlayBgm(); }, { once:false });
+['click','touchstart','keydown','pointerdown'].forEach(evt=>{
+  window.addEventListener(evt,()=>{ if(bgm.paused) tryPlayBgm(); }, { passive:true });
 });
 
 toggleSound.addEventListener('click', ()=>{
@@ -175,14 +200,21 @@ toggleSound.addEventListener('click', ()=>{
   toggleSound.textContent = bgm.paused ? '🔇 Bật nhạc' : '🔊 Tắt nhạc';
 });
 
-/* ================= Fireworks background =================== */
-(() => {
+/**************** Fireworks background (mobile-optimized) ****************/ 
+(()=>{
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const canvas = document.getElementById('fireworks');
   const ctx = canvas.getContext('2d', { alpha: true });
-  let w, h, dpr = Math.min(window.devicePixelRatio || 1, 2);
-  let rockets = [], particles = [];
+  let w, h; 
+  const smallScreen = window.matchMedia('(max-width: 480px)').matches;
+  let dpr = Math.min(window.devicePixelRatio || 1, smallScreen ? 1.25 : 2);
+
+  // Lower particle counts on small screens / reduced motion
+  let MAX_ROCKETS = reduceMotion ? 0 : (smallScreen ? 3 : 5);
+  let MAX_PARTICLES = reduceMotion ? 0 : (smallScreen ? 220 : 350);
   const GRAVITY = 0.06, AIR = 0.995;
-  const MAX_ROCKETS = 5, MAX_PARTICLES = 350;
+
+  let rockets = [], particles = [];
 
   function resize(){
     w = canvas.clientWidth = window.innerWidth;
@@ -193,7 +225,7 @@ toggleSound.addEventListener('click', ()=>{
   }
   window.addEventListener('resize', resize, { passive:true }); resize();
 
-  function rand(min, max){ return Math.random()*(max-min)+min; }
+  const rand = (min, max)=> Math.random()*(max-min)+min;
 
   function launch(){
     if (rockets.length >= MAX_ROCKETS) return;
@@ -201,7 +233,7 @@ toggleSound.addEventListener('click', ()=>{
     const y = h + 10;
     const targetX = rand(w*0.2, w*0.8);
     const targetY = rand(h*0.15, h*0.4);
-    const speed = rand(6.5, 8.5);
+    const speed = rand(6.2, 8.2);
     const angle = Math.atan2(targetY - y, targetX - x);
     rockets.push({
       x, y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed,
@@ -212,7 +244,7 @@ toggleSound.addEventListener('click', ()=>{
   }
 
   function explode(x,y,color){
-    const count = Math.floor(rand(40, 70));
+    const count = Math.floor(rand(30, 60));
     for(let i=0;i<count;i++){
       const angle = Math.random()*Math.PI*2;
       const speed = rand(1.5, 4.2) * (0.9 + Math.random()*0.3);
@@ -221,7 +253,7 @@ toggleSound.addEventListener('click', ()=>{
         vx: Math.cos(angle)*speed,
         vy: Math.sin(angle)*speed,
         alpha: 1,
-        size: rand(1.5,3.2),
+        size: rand(1.5,3.0),
         color,
         life: rand(45, 90)
       });
@@ -231,27 +263,27 @@ toggleSound.addEventListener('click', ()=>{
   let last = 0;
   function step(ts){
     requestAnimationFrame(step);
-    // throttle launch
-    if(ts - last > 500 + Math.random()*600){ launch(); last = ts; }
+    if (reduceMotion) return; // nothing to draw
 
-    // fade trail
+    // Throttle launches
+    if(ts - last > 550 + Math.random()*650){ launch(); last = ts; }
+
+    // Fade trail
     ctx.globalCompositeOperation = 'destination-out';
     ctx.fillStyle = 'rgba(0,0,0,0.25)';
     ctx.fillRect(0,0,w,h);
     ctx.globalCompositeOperation = 'lighter';
 
-    // update rockets
+    // Update rockets
     for(let i=rockets.length-1;i>=0;i--){
       const r = rockets[i];
       r.x += r.vx; r.y += r.vy;
       r.vy += GRAVITY*0.25;
       r.life--;
 
-      // draw rocket
       ctx.beginPath(); ctx.arc(r.x, r.y, 2.2, 0, Math.PI*2);
       ctx.fillStyle = r.color; ctx.fill();
 
-      // sparkle tail
       ctx.beginPath();
       ctx.moveTo(r.x, r.y);
       ctx.lineTo(r.x - r.vx*2, r.y - r.vy*2);
@@ -263,10 +295,10 @@ toggleSound.addEventListener('click', ()=>{
       }
     }
 
-    // limit particles for perf
+    // Limit particles for perf
     if(particles.length > MAX_PARTICLES) particles.splice(0, particles.length - MAX_PARTICLES);
 
-    // update particles
+    // Update particles
     for(let i=particles.length-1;i>=0;i--){
       const p = particles[i];
       p.vx *= AIR; p.vy = p.vy*AIR + GRAVITY;
@@ -286,7 +318,7 @@ toggleSound.addEventListener('click', ()=>{
   requestAnimationFrame(step);
 })();
 
-/* ================= Modal + Evasive decline ================= */
+/**************** Modal + Evasive decline (mobile aware) ****************/ 
 const openBtn   = document.getElementById('openCardBtn');
 const modal     = document.getElementById('bdayModal');
 const backdrop  = modal.querySelector('.backdrop');
@@ -301,7 +333,7 @@ function openModal(){
   lastFocused = document.activeElement;
   modal.classList.add('open');
   modal.setAttribute('aria-hidden','false');
-  setTimeout(()=>agreeBtn.focus(), 50);
+  setTimeout(()=>agreeBtn.focus(), 60);
   makeDeclineEvasive();
   resizeConfetti();
 }
@@ -318,37 +350,39 @@ window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && modal.classList
 
 function makeDeclineEvasive(){
   declineBtn.style.position = 'absolute';
+  const small = window.matchMedia('(max-width: 480px)').matches;
+  const nearDist = small ? 72 : 60; // more room on small screens
   const dodge = ()=>{
     const area = actions.getBoundingClientRect();
     const btn  = declineBtn.getBoundingClientRect();
-    const maxX = Math.max(0, area.width - btn.width  - 6);
-    const maxY = Math.max(0, area.height- btn.height - 6);
+    const maxX = Math.max(0, area.width  - btn.width  - 6);
+    const maxY = Math.max(0, area.height - btn.height - 6);
     const x = Math.random()*maxX, y = Math.random()*maxY;
     declineBtn.style.transition = 'transform .15s ease';
     declineBtn.style.transform = `translate(${x}px, ${y}px)`;
   };
-  declineBtn.addEventListener('mouseenter', dodge);
-  declineBtn.addEventListener('mousemove', dodge);
-  actions.addEventListener('mousemove', (e)=>{
+  ['mouseenter','mousemove','touchstart','pointermove'].forEach(evt=>{
+    declineBtn.addEventListener(evt, dodge, { passive:true });
+  });
+  actions.addEventListener('pointermove', (e)=>{
     const b = declineBtn.getBoundingClientRect();
-    const near = (dx,dy)=> Math.hypot(dx,dy) < 60;
     const dx = e.clientX - (b.left + b.width/2);
     const dy = e.clientY - (b.top  + b.height/2);
-    if(near(dx,dy)) dodge();
-  });
+    if(Math.hypot(dx,dy) < nearDist) dodge();
+  }, { passive:true });
   const block=(e)=>{ e.preventDefault(); e.stopPropagation(); declineBtn.blur(); };
   declineBtn.addEventListener('click', block);
   declineBtn.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' ') block(e); });
 }
 
-/* ================= Confetti on Agree ================= */
+/**************** Confetti on Agree (respects reduced motion) ****************/ 
 let rafId = null, particlesCF = [];
 function resizeConfetti(){
   const d = modal.querySelector('.dialog').getBoundingClientRect();
   confettiC.width = Math.floor(d.width);
   confettiC.height= Math.floor(d.height);
 }
-window.addEventListener('resize', ()=>{ if(modal.classList.contains('open')) resizeConfetti(); });
+window.addEventListener('resize', ()=>{ if(modal.classList.contains('open')) resizeConfetti(); }, { passive:true });
 
 agreeBtn.addEventListener('click', ()=>{
   celebrate();
@@ -359,11 +393,13 @@ agreeBtn.addEventListener('click', ()=>{
 });
 
 function celebrate(){
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) return; // respect user setting
   resizeConfetti();
   const ctx = confettiC.getContext('2d');
   confettiC.classList.add('show');
   const colors = ['#f87171','#fb923c','#fbbf24','#34d399','#60a5fa','#a78bfa','#f472b6'];
-  const N = 120;
+  const N = window.matchMedia('(max-width: 480px)').matches ? 90 : 120;
   particlesCF = Array.from({length:N}, ()=>({
     x: confettiC.width * Math.random(),
     y: -20 - Math.random()*40,
